@@ -1,26 +1,24 @@
-const apiKey = '39897083 - 75dbac4ee3cbc91ee06f44220';
+import axios from 'axios';
 
-const searchForm = document.getElementById('search-form');
+const API_KEY = '39897083-75dbac4ee3cbc91ee06f44220';
+const BASE_URL = 'https://pixabay.com/api/';
 
-searchForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const searchQuery = event.target.searchQuery.value;
-  
-  try {
-    const response = await axios.get('https://pixabay.com/api/', {
-      params: {
-        key: apiKey,
-        q: searchQuery,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: true,
-      },
-    });
+async function fetchImgs(target, page = 1) {
+  const options = {
+    key: API_KEY,
+    q: target,
+    image_type: 'photo',
+    orientation: 'horizontal',
+    safesearch: 'true',
+    per_page: 40,
+    page,
+  };
 
-    const images = response.data.hits;
+  const params = new URLSearchParams(options);
 
-    console.log(images);
-  } catch (error) {
-    console.error('Error fetching images', error);
-  }
-});
+  const res = await axios.get(`${BASE_URL}?${params}`);
+  const images = await res.data;
+  return images;
+}
+
+export { fetchImgs };
