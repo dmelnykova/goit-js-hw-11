@@ -1,7 +1,6 @@
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { Loading } from 'notiflix/build/notiflix-loading-aio';
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
+import { Notify, Loading } from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { fetchImgs } from './api';
 import { makeMarkup } from './functions'; 
@@ -19,20 +18,29 @@ async function dataHandler(searchTarget, page = 1) {
   try {
     const imgs = await fetchImgs(searchTarget, page);
     if (imgs.totalHits === 0) {
-      Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
+      Notify.failure('Sorry, there are no images matching your search query. Please try again.');
       return;
     }
-    refs.gallery.innerHTML = makeMarkup(imgs.hits);
+    
+    const markup = makeMarkup(imgs.hits);
+    refs.gallery.insertAdjacentHTML('beforeend', markup);
+
+    // "Load more" button
+    refs.loadMore.style.display = 'block';
+
     Notify.success(`Hooray! We found ${imgs.totalHits} images.`);
   } catch (error) {
     Notify.failure('Oops, something went wrong. Try reloading the page!');
   } finally {
     Loading.remove();
+    gallery.refresh();
   }
-  gallery.refresh();
 }
+
+refs.loadMore.addEventListener('click', () => {
+  page++;
+  dataHandler(currentSearchTarget, page);
+});
 
 refs.searchForm.addEventListener('submit', e => {
   e.preventDefault();

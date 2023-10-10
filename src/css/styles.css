@@ -62,3 +62,17 @@
     width: 250px;
     height: 400px;
 }
+
+.load-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    height: 25px;
+    width: 100px;
+    border: 3px solid rgba(38, 10, 57, 0.605);
+    background-color: #6c3a67ef;
+    color:#fff;
+    border-radius: 5px;
+}

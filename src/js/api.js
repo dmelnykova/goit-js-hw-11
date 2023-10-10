@@ -10,15 +10,18 @@ async function fetchImgs(target, page = 1) {
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: 'true',
+    page: page,
     per_page: 40,
-    page,
   };
 
-  const params = new URLSearchParams(options);
-
-  const res = await axios.get(`${BASE_URL}?${params}`);
-  const images = await res.data;
-  return images;
+  try {
+    const response = await axios.get(BASE_URL, { params: options });
+    const { data } = response;
+    return data;
+  } catch (error) {
+    console.error('Error fetching images:', error);
+    throw new Error('Failed to fetch images');
+  }
 }
 
 export { fetchImgs };

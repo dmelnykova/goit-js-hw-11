@@ -1,10 +1,10 @@
 import { Loading, Notify } from 'notiflix';
-import { fetchImgs } from './api';
+import { fetchImgs } from './api';  
 import { refs } from './refs';
 import { gallery } from '.';
 
-let page = 1;
 let currentSearchTarget = '';
+let page = 1;  
 
 const observe = new IntersectionObserver(observeHandler);
 
@@ -30,7 +30,7 @@ function makeMarkup(imagesArr) {
 
 async function fetchAndDisplayImages(searchTarget, page) {
   try {
-    const imgs = await fetchImgByPage(searchTarget, page);
+    const imgs = await fetchImgs(searchTarget, page);
     if (imgs.totalHits === 0) {
       Notify.failure('Sorry, there are no images matching your search query. Please try again.');
       return;
@@ -69,4 +69,20 @@ function observeHandler(entries) {
   });
 }
 
-export { makeMarkup, fetchAndDisplayImages, observeHandler };
+function onSubmit(e) {
+  e.preventDefault();
+  Loading.arrows();
+
+  currentSearchTarget = e.target.elements.searchQuery.value;
+  if (!currentSearchTarget) {
+    Loading.remove();
+    Notify.failure('Please enter your request correctly!');
+    return;
+  }
+
+  page = 1;
+  refs.gallery.innerHTML = '';
+  fetchAndDisplayImages(currentSearchTarget, page); 
+}
+
+export { makeMarkup, fetchAndDisplayImages, observeHandler, onSubmit };
